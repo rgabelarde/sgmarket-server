@@ -43,4 +43,4 @@ router.get(
   getSuspiciousActivityLogsByDateRange
 );
 
-export default router;
+module.exports = router;
