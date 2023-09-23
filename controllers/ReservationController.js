@@ -1,4 +1,4 @@
-import Reservation from "../models/Reservation";
+const Reservation = require("../models/Reservation");
 
 // Helper function to handle errors
 const handleError = (res, statusCode, message) => {
@@ -6,7 +6,7 @@ const handleError = (res, statusCode, message) => {
 };
 
 // [GET] Get a reservation by ID
-export const getReservationById = async (req, res) => {
+exports.getReservationById = async (req, res) => {
   const { reservationId } = req.params;
 
   if (!reservationId) {
@@ -27,7 +27,7 @@ export const getReservationById = async (req, res) => {
 };
 
 // [GET] Get all reservations by Listing ID
-export const getReservationsByListingId = async (req, res) => {
+exports.getReservationsByListingId = async (req, res) => {
   const { listingId } = req.params;
 
   if (!listingId) {
@@ -45,7 +45,7 @@ export const getReservationsByListingId = async (req, res) => {
 };
 
 // [POST] Create a new reservation
-export const createReservation = async (req, res) => {
+exports.createReservation = async (req, res) => {
   const { listingId, uuid, isMailing, meetupLocation, priceOffer } = req.body;
 
   try {
@@ -89,7 +89,7 @@ export const createReservation = async (req, res) => {
 };
 
 // [PATCH] Update a reservation by ID
-export const updateReservationById = async (req, res) => {
+exports.updateReservationById = async (req, res) => {
   const { reservationId } = req.params;
   const updateFields = [
     "approvalStatus",

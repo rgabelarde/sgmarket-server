@@ -26,21 +26,21 @@ router.get(
 router.post(
   "/log",
   suspiciousActivityLogValidation,
-  createSuspiciousActivityLog
+  suspiciousActivityLogController.createSuspiciousActivityLog
 );
 
 // Delete a suspicious activity log by ID
 router.delete(
   "/log/:logId",
   suspiciousActivityLogIdValidation,
-  deleteSuspiciousActivityLogById
+  suspiciousActivityLogController.deleteSuspiciousActivityLogById
 );
 
 // Get suspicious activity logs by date range
 router.get(
   "/user/:uuid/logs/range",
   uuidValidation,
-  getSuspiciousActivityLogsByDateRange
+  suspiciousActivityLogController.getSuspiciousActivityLogsByDateRange
 );
 
 module.exports = router;

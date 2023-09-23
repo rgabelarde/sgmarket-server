@@ -9,7 +9,7 @@ const handleError = (res, statusCode, message) => {
 };
 
 // Get all messages involving the current user and another user for a specific listing
-export const getMessagesInChatForListing = async (req, res) => {
+exports.getMessagesInChatForListing = async (req, res) => {
   const { listingId } = req.params;
   const { uuid } = req.query;
 
@@ -47,7 +47,7 @@ export const getMessagesInChatForListing = async (req, res) => {
 };
 
 // Create a new message in a chat regarding a unique listing (if chat is new, create a new chat object as well)
-export const createMessageInChat = async (req, res) => {
+exports.createMessageInChat = async (req, res) => {
   const { chatId, uuid, content } = req.body;
   const { listingId } = req.params;
 

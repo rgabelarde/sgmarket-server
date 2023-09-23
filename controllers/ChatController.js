@@ -7,7 +7,7 @@ const handleError = (res, statusCode, message) => {
 };
 
 // Get a chat involving the current user and another user for a specific listing
-export const getChatForListing = async (req, res) => {
+exports.getChatForListing = async (req, res) => {
   const { uuid } = req.query;
   const { listingId } = req.params;
 

@@ -1,5 +1,5 @@
-import SuspiciousActivityLog from "../models/SuspiciousActivityLog";
-import User from "../models/User";
+const SuspiciousActivityLog = require("../models/SuspiciousActivityLog");
+const User = require("../models/User");
 
 // Helper function to handle errors
 const handleError = (res, statusCode, message) => {
@@ -7,7 +7,7 @@ const handleError = (res, statusCode, message) => {
 };
 
 // [GET] Get a suspicious activity log by ID
-export const getSuspiciousActivityLogById = async (req, res) => {
+exports.getSuspiciousActivityLogById = async (req, res) => {
   const { logId } = req.params;
 
   try {
@@ -24,7 +24,7 @@ export const getSuspiciousActivityLogById = async (req, res) => {
 };
 
 // [GET] Get all suspicious activity logs of a single user by UUID
-export const getAllSuspiciousActivityLogsByUserId = async (req, res) => {
+exports.getAllSuspiciousActivityLogsByUserId = async (req, res) => {
   const { uuid } = req.params;
 
   try {
@@ -45,7 +45,7 @@ export const getAllSuspiciousActivityLogsByUserId = async (req, res) => {
 };
 
 // [POST] Create a new suspicious activity log
-export const createSuspiciousActivityLog = async (req, res) => {
+exports.createSuspiciousActivityLog = async (req, res) => {
   const { uuid, reason } = req.body;
   const { reportedBy } = req.query;
 
@@ -80,7 +80,7 @@ export const createSuspiciousActivityLog = async (req, res) => {
 };
 
 // [DELETE] Delete a suspicious activity log by ID
-export const deleteSuspiciousActivityLogById = async (req, res) => {
+exports.deleteSuspiciousActivityLogById = async (req, res) => {
   const { logId } = req.params;
 
   try {
@@ -97,7 +97,7 @@ export const deleteSuspiciousActivityLogById = async (req, res) => {
 };
 
 // [GET] Get suspicious activity logs by date range
-export const getSuspiciousActivityLogsByDateRange = async (req, res) => {
+exports.getSuspiciousActivityLogsByDateRange = async (req, res) => {
   const { uuid } = req.params;
   const { startDate, endDate } = req.query;
 
