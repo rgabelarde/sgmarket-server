@@ -20,9 +20,13 @@ exports.getChatForListing = async (req, res) => {
     if (!userExists) {
       throw new NotFoundError("Current user not found");
     }
+
     // Find the chat associated with the specified listing and involving the current user
     const chat = await Chat.findOne({
-      participantUuids: uuid, // Check if uuid is one of the participants
+      $or: [
+        { "participantUUIDs.buyerUUID": uuid },
+        { "participantUUIDs.sellerUUID": uuid },
+      ],
       listingId,
     });
 
@@ -49,9 +53,12 @@ exports.getChatsForUser = async (req, res) => {
       throw new NotFoundError("Current User not found");
     }
 
-    // Find all chats where the uuid is one of the participants
+    // Find all chats where the uuid is one of the participants (either buyerUUID or sellerUUID)
     const chats = await Chat.find({
-      participantUuids: uuid,
+      $or: [
+        { "participantUUIDs.buyerUUID": uuid },
+        { "participantUUIDs.sellerUUID": uuid },
+      ],
     });
 
     res.json(chats);

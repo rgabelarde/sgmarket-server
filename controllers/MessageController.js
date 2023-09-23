@@ -32,10 +32,13 @@ exports.getMessagesInChatForListing = async (req, res) => {
     await listing.populate("seller");
     const otherUserUuid = listing.seller.uuid;
 
-    // Find the chat that includes both current user and other user for the specific listing
+    // Find the chat that includes both the current user and other user for the specific listing
     const chat = await Chat.findOne({
-      participantUuids: { $all: [uuid, otherUserUuid] },
-      listingId,
+      $and: [
+        { "participantUUIDs.buyerUUID": uuid },
+        { "participantUUIDs.sellerUUID": otherUserUuid },
+        { listingId: listingId },
+      ],
     });
 
     if (!chat) {
@@ -48,7 +51,6 @@ exports.getMessagesInChatForListing = async (req, res) => {
     handleError(res, error);
   }
 };
-
 // Create a new message in a chat regarding a unique listing (if chat is new, create a new chat object as well)
 exports.createMessageInChat = async (req, res) => {
   const { chatId, buyerUUID, content } = req.body;
@@ -87,12 +89,22 @@ exports.createMessageInChat = async (req, res) => {
     }
 
     if (!chatId) {
-      // Create a new chat involving the buyer and seller
-      chat = new Chat({
-        participantUuids: [buyerUUID, sellerUUID],
-        listingId,
+      // Look for an existing chat with the same buyerUUID and listingId
+      chat = await Chat.findOne({
+        $and: [
+          { "participantUUIDs.buyerUUID": buyerUUID },
+          { listingId: listingId },
+        ],
       });
-      chat = await chat.save();
+
+      if (!chat) {
+        // If no existing chat is found, create a new one
+        chat = new Chat({
+          participantUUIDs: { buyerUUID, sellerUUID },
+          listingId,
+        });
+        chat = await chat.save();
+      }
     } else {
       // If chatId is provided, check if the chat exists
       chat = await Chat.findById(chatId);
