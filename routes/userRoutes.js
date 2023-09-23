@@ -8,16 +8,16 @@ const {
 } = require("../common/middleware/validation");
 
 // [GET] Get a user by UUID
-router.get("/get/uuid/:uuid", uuidValidation, userController.getUserByUuid);
+router.get("/view/uuid/:uuid", userController.getUserByUuid);
 
 // [GET] Get a user by UUID
-router.get("/get/id/:userId", mongoIdValidation, userController.getUserById);
+router.get("/view/id/:userId", mongoIdValidation, userController.getUserById);
 
 // [POST] Create a new user
 router.post("/onboard", createUserValidation, userController.createUser);
 
 // [PATCH] Update a user by UUID
-router.patch("/update/:uuid", uuidValidation, userController.updateUserByUuid);
+router.patch("/update/:uuid", userController.updateUserByUuid);
 
 // [DELETE] Delete a user by UUID
 router.delete("/delete/:uuid", uuidValidation, userController.deleteUserByUuid);

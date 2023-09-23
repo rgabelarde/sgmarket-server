@@ -39,7 +39,8 @@ exports.getListingsWithLimit = async (req, res) => {
 
 // [POST] Create a new listing
 exports.createListing = async (req, res) => {
-  const { uuid, listingName, description, price } = req.body;
+  const { uuid } = req.query;
+  const { listingName, description, price } = req.body;
 
   try {
     // Check if required fields are missing
@@ -72,6 +73,7 @@ exports.createListing = async (req, res) => {
 
 // [PATCH] Update a listing by ID
 exports.updateListingById = async (req, res) => {
+  const { uuid } = req.query;
   const listingId = req.params.listingId;
   const updateFields = ["listingName", "description", "price", "status"];
   const updatedFields = {};

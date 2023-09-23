@@ -19,6 +19,7 @@ exports.getUserById = async (req, res) => {
     handleError(res, error);
   }
 };
+
 // [GET] Get a user by UUID
 exports.getUserByUuid = async (req, res) => {
   const uuid = req.params.uuid;

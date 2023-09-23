@@ -58,7 +58,7 @@ exports.limitValidation = [
     .custom(validate(isPositiveInteger, "Limit must be a positive integer")),
 ];
 exports.createListingValidation = [
-  body("uuid")
+  query("uuid")
     .exists()
     .withMessage("UUID is required")
     .custom(validate(isUUIDv4, "Must be a valid UUIDv4")),

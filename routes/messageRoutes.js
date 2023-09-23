@@ -9,7 +9,7 @@ const {
 
 // [GET] Get all messages involving the current user and another user for a specific listing
 router.get(
-  "/:listingId",
+  "/view/:listingId",
   getMessagesInChatValidation,
   messageController.getMessagesInChatForListing
 );

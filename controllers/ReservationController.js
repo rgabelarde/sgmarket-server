@@ -14,7 +14,7 @@ exports.getReservationById = async (req, res) => {
       throw new Error4xx("Reservation Id is missing from the URL");
     }
     if (!uuid) {
-      throw new Error4xx("UUID parameter is missing from the URL");
+      throw new Error4xx("UUID missing from query parameters");
     }
 
     const reservation = await Reservation.findById(reservationId).populate(
@@ -55,7 +55,7 @@ exports.getReservationsByListingId = async (req, res) => {
       throw new Error4xx("listingId parameter is missing from the URL");
     }
     if (!uuid) {
-      throw new Error4xx("UUID parameter is missing from the URL");
+      throw new Error4xx("UUID missing from query parameters");
     }
     // Find the listing to get the seller's UUID
     const listing = await Listing.findById(listingId).populate("seller");
@@ -156,7 +156,7 @@ exports.updateReservationById = async (req, res) => {
       throw new Error4xx("Reservation Id is missing from the URL");
     }
     if (!buyerUUID) {
-      throw new Error4xx("buyerUUID parameter is missing from the URL");
+      throw new Error4xx("buyerUUID missing from query parameters");
     }
     const updatedFields = {};
     // Iterate over the fields and update if defined in the request body
@@ -280,9 +280,7 @@ exports.updatePaymentStatus = async (req, res) => {
       throw new Error4xx("Reservation Id is missing from the URL");
     }
     if (!buyerUUID) {
-      throw new Error4xx(
-        "buyerUUID (buyer's) parameter is missing from the URL"
-      );
+      throw new Error4xx("buyerUUID missing from query parameters");
     }
     if (!paymentStatus) {
       throw new Error4xx("paymentStatus is a required request body field");

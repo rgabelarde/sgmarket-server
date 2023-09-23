@@ -52,6 +52,7 @@ class Error4xx extends Error {
       case "Start and/or End date missing from query parameters":
       case "reportedBy missing from query parameters":
       case "UUID missing from query parameters":
+      case "buyerUUID missing from query parameters":
         this.name = "QueryParamMissingError";
         break;
 

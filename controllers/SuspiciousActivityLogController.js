@@ -57,10 +57,6 @@ exports.createSuspiciousActivityLog = async (req, res) => {
     if (!uuid || !reason) {
       throw new Error4xx("UUID and reason are required request body fields");
     }
-    if (!reportedBy) {
-      throw new Error4xx("reportedBy missing from query parameters");
-    }
-
     // Check if the user with the specified UUID exists
     const user = await User.findOne({ uuid });
     if (!user) {
@@ -75,7 +71,13 @@ exports.createSuspiciousActivityLog = async (req, res) => {
     const newLog = new SuspiciousActivityLog(newLogData);
     // Save the new log to the database
     const savedLog = await newLog.save();
-    res.status(201).json(savedLog);
+
+    user.flags += 1;
+    if (user.flags >= 3) {
+      user.biometricVerified = false;
+    }
+    await user.save();
+    res.status(201).json({ log: savedLog, user: user });
   } catch (error) {
     handleError(res, error);
   }
