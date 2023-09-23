@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const suspiciousActivityLogSchema = new mongoose.Schema({
   userId: {
-    type: String, // Store User's uuid as a string
+    type: String,
     required: true,
   },
   reportedBy: {
-    type: String, // Store User's uuid as a string
+    type: String,
     required: true,
     default: "System Generated",
   },

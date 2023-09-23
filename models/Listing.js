@@ -12,7 +12,10 @@ const listingSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 200,
   },
-  description: String,
+  description: {
+    type: String,
+    minlength: 1,
+  },
   status: {
     type: String,
     enum: ["available", "reserved", "sold"],

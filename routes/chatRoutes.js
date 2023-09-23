@@ -5,7 +5,11 @@ const chatController = require("../controllers/ChatController");
 const {
   listingIdValidation,
   queryUserUUIDValidation,
-} = require("./middleware/validation");
+  uuidValidation,
+} = require("../common/middleware/validation");
+
+// Add a new route to get all chats for a specific user's UUID
+router.get("/get/all/:uuid", uuidValidation, chatController.getChatsForUser);
 
 // Route to get a chat for a specific listing involving the current user and another user
 router.get(

@@ -2,30 +2,34 @@ const Message = require("../models/Message");
 const Chat = require("../models/Chat");
 const Listing = require("../models/Listing");
 const User = require("../models/User");
-
-// Helper function to handle errors
-const handleError = (res, statusCode, message) => {
-  return res.status(statusCode).json({ error: message });
-};
+const { NotFoundError, Error4xx } = require("../common/utils/errorValues");
+const { handleError } = require("../common/utils/errorHandler");
 
 // Get all messages involving the current user and another user for a specific listing
 exports.getMessagesInChatForListing = async (req, res) => {
-  const { listingId } = req.params;
+  const listingId = req.params.listingId;
   const { uuid } = req.query;
 
   try {
+    if (!uuid) {
+      throw new Error4xx("UUID missing from query parameters");
+    }
+    if (!listingId) {
+      throw new Error4xx("listingId parameter is missing in the URL");
+    }
+
     const userExists = await User.exists({ uuid: uuid });
     if (!userExists) {
-      handleError(res, 404, "Current user not found");
+      throw new NotFoundError("Current user not found");
     }
 
     // Find the listing to get the seller's UUID
     const listing = await Listing.findById(listingId);
     if (!listing) {
-      handleError(res, 404, "Listing not found");
+      throw new NotFoundError("Listing not found");
     }
     // Populate the seller's UUID from the listing
-    await listing.populate("seller").execPopulate();
+    await listing.populate("seller");
     const otherUserUuid = listing.seller.uuid;
 
     // Find the chat that includes both current user and other user for the specific listing
@@ -35,40 +39,57 @@ exports.getMessagesInChatForListing = async (req, res) => {
     });
 
     if (!chat) {
-      handleError(res, 404, "Chat not found");
+      throw new NotFoundError("Chat not found");
     }
     // Find all messages in the chat
     const messages = await Message.find({ chatId: chat._id });
-
     res.json(messages);
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };
 
 // Create a new message in a chat regarding a unique listing (if chat is new, create a new chat object as well)
 exports.createMessageInChat = async (req, res) => {
-  const { chatId, uuid, content } = req.body;
-  const { listingId } = req.params;
+  const { chatId, buyerUUID, content } = req.body;
+  const listingId = req.params.listingId;
 
   try {
     let chat;
 
-    const userExists = await User.exists({ uuid: uuid });
+    if (!listingId) {
+      throw new Error4xx("listingId parameter is missing in the URL");
+    }
+
+    if (!buyerUUID || !content) {
+      throw new Error4xx(
+        "buyerUUID and content are required request body fields"
+      );
+    }
+
+    const userExists = await User.exists({ uuid: buyerUUID });
     if (!userExists) {
-      handleError(res, 404, "Current user not found");
+      throw new NotFoundError("Current user not found");
+    }
+
+    // Find the listing to get the seller's UUID
+    const listing = await Listing.findById(listingId);
+    if (!listing) {
+      throw new NotFoundError("Listing not found");
+    }
+
+    // Populate the seller's UUID from the listing
+    await listing.populate("seller");
+    const sellerUUID = listing.seller.uuid;
+
+    if (sellerUUID === buyerUUID) {
+      throw new Error4xx("Seller cannot enquire on their own listing");
     }
 
     if (!chatId) {
       // Create a new chat involving the buyer and seller
-      const listing = await Listing.findById(listingId);
-      if (!listing) {
-        handleError(res, 404, "Listing not found");
-      }
-      const sellerUuid = listing.seller.uuid;
-
       chat = new Chat({
-        participantUuids: [uuid, sellerUuid],
+        participantUuids: [buyerUUID, sellerUUID],
         listingId,
       });
       chat = await chat.save();
@@ -76,20 +97,19 @@ exports.createMessageInChat = async (req, res) => {
       // If chatId is provided, check if the chat exists
       chat = await Chat.findById(chatId);
       if (!chat) {
-        handleError(res, 404, "Chat not found");
+        throw new NotFoundError("Chat not found");
       }
     }
     // Create a new message associated with the chat
     const newMessage = new Message({
       chatId: chat._id,
-      uuid,
+      uuid: buyerUUID,
       content,
     });
     // Save the new message
     const savedMessage = await newMessage.save();
-
     res.json(savedMessage);
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };

@@ -1,37 +1,33 @@
 const Reservation = require("../models/Reservation");
-
-// Helper function to handle errors
-const handleError = (res, statusCode, message) => {
-  return res.status(statusCode).json({ error: message });
-};
+const User = require("../models/User");
+const Listing = require("../models/Listing");
+const { NotFoundError, Error4xx } = require("../common/utils/errorValues");
+const { handleError } = require("../common/utils/errorHandler");
 
 // [GET] Get a reservation by ID
 exports.getReservationById = async (req, res) => {
-  const { reservationId } = req.params;
-
+  const reservationId = req.params.reservationId;
   if (!reservationId) {
-    handleError(res, 400, "Please provide a reservation Id!");
+    throw new Error4xx("Reservation Id is missing from the URL");
   }
 
   try {
     const reservation = await Reservation.findById(reservationId);
-
     if (!reservation) {
-      handleError(res, 404, "Reservation not found");
+      throw new NotFoundError("Reservation not found");
     }
 
     res.json(reservation);
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };
 
 // [GET] Get all reservations by Listing ID
 exports.getReservationsByListingId = async (req, res) => {
-  const { listingId } = req.params;
-
+  const listingId = req.params.listingId;
   if (!listingId) {
-    handleError(res, 400, "Please provide a reservation Id!");
+    throw new Error4xx("listingId parameter is missing from the URL");
   }
 
   try {
@@ -40,28 +36,39 @@ exports.getReservationsByListingId = async (req, res) => {
 
     res.json(reservations);
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };
 
 // [POST] Create a new reservation
 exports.createReservation = async (req, res) => {
-  const { listingId, uuid, isMailing, meetupLocation, priceOffer } = req.body;
+  const { listingId, buyerUUID, isMailing, meetupLocation, priceOffer } =
+    req.body;
 
   try {
     // Check if required fields are missing
-    if (!listingId || !uuid || isMailing === undefined || !priceOffer) {
-      handleError(
-        res,
-        400,
-        "listingId, uuid, isMailing, and priceOffer are required fields"
+    if (!listingId || !buyerUUID || isMailing === undefined || !priceOffer) {
+      throw new Error4xx(
+        "listingId, buyerUUID, isMailing, and priceOffer are required request body fields"
       );
     }
 
-    const user = await User.findOne({ uuid });
+    // Find the listing to get the seller's UUID
+    const listing = await Listing.findById(listingId);
 
+    if (!listing) {
+      throw new NotFoundError("Listing not found");
+    }
+    // Check if the buyerUUID is the same as the seller's UUID
+    if (buyerUUID === listing.seller.uuid) {
+      throw new Error4xx(
+        "Buyer cannot be the seller, you cannot reserve your own listing!"
+      );
+    }
+
+    const user = await User.findOne({ uuid: buyerUUID });
     if (!user) {
-      handleError(res, 404, "User not found");
+      throw new NotFoundError("Current user not found");
     }
 
     // Create a new reservation document based on the request body
@@ -71,26 +78,25 @@ exports.createReservation = async (req, res) => {
       isMailing,
       priceOffer,
     };
-
     // Only set meetupLocation if isMailing is false
     if (!isMailing) {
       newReservationData.meetupLocation = meetupLocation;
     }
-
     const newReservation = new Reservation(newReservationData);
-
     // Save the new reservation to the database
     const savedReservation = await newReservation.save();
-
     res.status(201).json(savedReservation);
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };
 
 // [PATCH] Update a reservation by ID
 exports.updateReservationById = async (req, res) => {
-  const { reservationId } = req.params;
+  const reservationId = req.params.reservationId;
+  if (!reservationId) {
+    throw new Error4xx("Reservation Id is missing from the URL");
+  }
   const updateFields = [
     "approvalStatus",
     "isMailing",
@@ -110,7 +116,9 @@ exports.updateReservationById = async (req, res) => {
 
   try {
     if (Object.keys(updatedFields).length === 0) {
-      handleError(res, 400, "No fields provided for update");
+      throw new Error4xx(
+        "No parameters provided for update, request body is empty"
+      );
     }
 
     // Check if approvalStatus is being changed to 'approved'
@@ -118,9 +126,7 @@ exports.updateReservationById = async (req, res) => {
       updatedFields.approvalStatus === "approved" &&
       (await isListingStatusNotAvailable(updatedFields.listingId))
     ) {
-      handleError(
-        res,
-        400,
+      throw new Error4xx(
         "Cannot approve reservation for a listing with status other than 'available'"
       );
     }
@@ -132,18 +138,17 @@ exports.updateReservationById = async (req, res) => {
     );
 
     if (!updatedReservation) {
-      handleError(res, 404, "Reservation not found");
+      throw new NotFoundError("Reservation not found");
     }
 
     res.json(updatedReservation);
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };
 
 // Helper function to check if listing status is not 'available'
 const isListingStatusNotAvailable = async (listingId) => {
   const listing = await Listing.findById(listingId);
-
   return listing ? listing.status !== "available" : false;
 };

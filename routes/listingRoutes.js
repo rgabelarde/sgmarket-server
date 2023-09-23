@@ -6,24 +6,24 @@ const {
   limitValidation,
   createListingValidation,
   updateListingValidation,
-} = require("./middleware/validation");
+} = require("../common/middleware/validation");
 
 // Get a listing by ID
 router.get(
-  "/:listingId",
+  "/view/:listingId",
   listingIdValidation,
   listingController.getListingById
 );
 
 // Get listings with an optional limit parameter
-router.get("/", limitValidation, listingController.getListingsWithLimit);
+router.get("/view", limitValidation, listingController.getListingsWithLimit);
 
 // Create a new listing
-router.post("/", createListingValidation, listingController.createListing);
+router.post("/new", createListingValidation, listingController.createListing);
 
 // Update a listing by ID
 router.patch(
-  "/:listingId",
+  "/update/:listingId",
   updateListingValidation,
   listingController.updateListingById
 );

@@ -85,7 +85,7 @@ exports.updateListingValidation = [
     ),
 ];
 
-// User Validations
+// User Validations (used for chat as well)
 exports.uuidValidation = [
   param("uuid")
     .exists()
@@ -109,7 +109,9 @@ exports.createMessageInChatValidation = [
   param("listingId")
     .isMongoId()
     .withMessage("Listing ID must be a valid MongoDB ID"),
-  check("uuid").isUUID(4).withMessage("Sender UUID must be a valid UUIDv4"),
+  check("buyerUUID")
+    .isUUID(4)
+    .withMessage("Sender UUID must be a valid UUIDv4"),
   check("content").custom(
     validate(
       isNonEmptyString,
@@ -123,7 +125,7 @@ exports.createReservationValidation = [
   body("listingId")
     .isMongoId()
     .withMessage("Listing ID must be a valid MongoDB ID"),
-  body("uuid")
+  body("buyerUUID")
     .isUUID(4)
     .withMessage("UUID must be a valid UUIDv4 in the request body"),
   body("isMailing").isBoolean().withMessage("isMailing must be a boolean"),

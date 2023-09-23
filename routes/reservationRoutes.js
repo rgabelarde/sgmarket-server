@@ -4,7 +4,7 @@ const reservationController = require("../controllers/ReservationController");
 const {
   createReservationValidation,
   updateReservationValidation,
-} = require("./middleware/validation");
+} = require("../common/middleware/validation");
 
 // [GET] Get a reservation by ID
 router.get("/:reservationId", reservationController.getReservationById);

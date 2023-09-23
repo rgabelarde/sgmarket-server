@@ -1,4 +1,38 @@
 const mongoose = require("mongoose");
+const fs = require("fs");
+
+let vulgarities;
+
+fs.readFile("./data/vulgarities.txt", function (err, data) {
+  if (err) throw err;
+  vulgarities = data.toString().split("\n");
+});
+
+// Create a custom validation function for username
+const usernameValidator = (value) => {
+  // Regular expression to check for spaces, vulgarities, and symbols at the start
+  const spacePattern = /\s/;
+  const symbolPattern = /^[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/; // Add symbols you want to disallow
+  // add casing insensitivity
+  const lowercaseValue = value.toLowerCase();
+
+  // Check for spaces
+  if (spacePattern.test(value)) {
+    return false;
+  }
+
+  // Check for vulgarities
+  if (vulgarities.some((vulgar) => lowercaseValue.includes(vulgar))) {
+    return false;
+  }
+
+  // Check for symbols at the start
+  if (symbolPattern.test(lowercaseValue[0])) {
+    return false;
+  }
+
+  return true;
+};
 
 const userSchema = new mongoose.Schema({
   uuid: {
@@ -21,6 +55,11 @@ const userSchema = new mongoose.Schema({
     unique: true,
     minlength: 4,
     maxlength: 100,
+    validate: {
+      validator: usernameValidator,
+      message:
+        "Username cannot contain spaces, vulgarities, or start with a symbol.",
+    },
   },
   email: {
     type: String,

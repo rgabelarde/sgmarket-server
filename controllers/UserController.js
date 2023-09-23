@@ -1,39 +1,23 @@
 const User = require("../models/User");
-
-// Helper function to handle errors
-const handleError = (res, statusCode, message) => {
-  return res.status(statusCode).json({ error: message });
-};
-
-// [GET] Get a user using their unique UUID
-exports.findUserByUuid = async (req, res) => {
-  const { uuid } = req.params;
-
-  try {
-    const user = await User.findOne({ uuid });
-    if (!user) {
-      handleError(res, 404, "User not found");
-    } else {
-      res.json(user);
-    }
-  } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
-  }
-};
+const { NotFoundError, Error4xx } = require("../common/utils/errorValues");
+const { handleError } = require("../common/utils/errorHandler");
 
 // [GET] Get a user by UUID
 exports.getUserByUuid = async (req, res) => {
-  const { uuid } = req.params;
+  const uuid = req.params.uuid;
 
   try {
+    if (!uuid) {
+      throw new Error4xx("UUID parameter is missing from the URL");
+    }
     const user = await User.findOne({ uuid });
     if (!user) {
-      handleError(res, 404, "User not found");
+      throw new NotFoundError("Current user not found");
     } else {
       res.json(user);
     }
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };
 
@@ -48,10 +32,8 @@ exports.createUser = async (req, res) => {
     });
 
     if (existingUser) {
-      handleError(
-        res,
-        409,
-        "User with the same username, email, or uuid already exists"
+      throw new Error4xx(
+        "User with the same username (case insensitive), email, or uuid already exists"
       );
     } else {
       // Create a new user document based on the request body
@@ -68,7 +50,7 @@ exports.createUser = async (req, res) => {
       res.status(201).json(newUser);
     }
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };
 
@@ -85,8 +67,13 @@ exports.updateUserByUuid = async (req, res) => {
   });
 
   try {
+    if (!uuid) {
+      throw new Error4xx("UUID parameter is missing from the URL");
+    }
     if (Object.keys(updatedFields).length === 0) {
-      handleError(res, 400, "No fields provided for update");
+      throw new Error4xx(
+        "No parameters provided for update, request body is empty"
+      );
     } else {
       const updatedUser = await User.findOneAndUpdate(
         { uuid: uuid },
@@ -95,31 +82,31 @@ exports.updateUserByUuid = async (req, res) => {
       );
 
       if (!updatedUser) {
-        handleError(res, 404, "User not found");
+        throw new NotFoundError("User not found");
       } else {
         res.json(updatedUser);
       }
     }
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };
 
 // Delete a user by their UUID (in URL)
 exports.deleteUserByUuid = async (req, res) => {
-  const { uuid } = req.body;
+  const uuid = req.params.uuid;
 
-  if (!uuid) {
-    handleError(res, 400, "UUID parameter is missing in the URL");
-  }
   try {
+    if (!uuid) {
+      throw new Error4xx("UUID parameter is missing in the URL");
+    }
     const deletedUser = await User.findOneAndDelete({ uuid: uuid });
     if (!deletedUser) {
-      handleError(res, 404, "User not found");
+      throw new NotFoundError("User not found");
     } else {
       res.json({ message: "User deleted successfully" });
     }
   } catch (error) {
-    handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
   }
 };

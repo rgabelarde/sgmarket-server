@@ -1,20 +1,24 @@
 const Chat = require("../models/Chat");
 const User = require("../models/User");
-
-// Helper function to handle errors
-const handleError = (res, statusCode, message) => {
-  return res.status(statusCode).json({ error: message });
-};
+const { NotFoundError, Error4xx } = require("../common/utils/errorValues");
+const { handleError } = require("../common/utils/errorHandler");
 
 // Get a chat involving the current user and another user for a specific listing
 exports.getChatForListing = async (req, res) => {
   const { uuid } = req.query;
-  const { listingId } = req.params;
+  const listingId = req.params.listingId;
 
   try {
+    if (!uuid) {
+      throw new Error4xx("UIUD missing from query parameters");
+    }
+    if (!listingId) {
+      throw new Error4xx("listingId parameter is missing in the URL");
+    }
+
     const userExists = await User.exists({ uuid: uuid });
     if (!userExists) {
-      handleError(res, 404, "Current user not found");
+      throw new NotFoundError("Current user not found");
     }
     // Find the chat associated with the specified listing and involving the current user
     const chat = await Chat.findOne({
@@ -23,11 +27,35 @@ exports.getChatForListing = async (req, res) => {
     });
 
     if (!chat) {
-      handleError(res, 404, "Chat not found");
+      throw new NotFoundError("Chat not found");
     }
 
     res.json(chat);
   } catch (error) {
-    return handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, error);
+  }
+};
+
+// Get all chats for a specific user's UUID
+exports.getChatsForUser = async (req, res) => {
+  const uuid = req.params.uuid;
+
+  try {
+    if (!uuid) {
+      throw new Error4xx("UUID parameter is missing in the URL");
+    }
+    const userExists = await User.exists({ uuid: uuid });
+    if (!userExists) {
+      throw new NotFoundError("Current User not found");
+    }
+
+    // Find all chats where the uuid is one of the participants
+    const chats = await Chat.find({
+      participantUuids: uuid,
+    });
+
+    res.json(chats);
+  } catch (error) {
+    handleError(res, error);
   }
 };

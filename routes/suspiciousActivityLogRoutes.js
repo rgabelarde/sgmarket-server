@@ -4,7 +4,7 @@ const {
   uuidValidation,
   suspiciousActivityLogValidation,
   suspiciousActivityLogIdValidation,
-} = require("./middleware/validation");
+} = require("../common/middleware/validation");
 
 const router = express.Router();
 
