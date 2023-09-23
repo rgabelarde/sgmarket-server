@@ -45,8 +45,7 @@ const reservationSchema = new mongoose.Schema({
   },
 });
 
-// Create a compound unique index on 'listingId' and 'buyer'
-reservationSchema.index({ listingId: 1, buyer: 1 }, { unique: true });
+reservationSchema.index({ listingId: 1, buyer: 1 });
 
 const Reservation = mongoose.model("Reservation", reservationSchema);
 

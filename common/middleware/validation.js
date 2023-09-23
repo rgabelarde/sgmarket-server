@@ -3,7 +3,7 @@ const { body, param, query, check } = require("express-validator");
 // Custom validation function
 const validate = (validatorFn, errorMessage) => (value) => {
   if (!validatorFn(value)) {
-    throw new Error(errorMessage);
+    return false;
   }
   return true;
 };
