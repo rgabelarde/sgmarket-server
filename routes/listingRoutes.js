@@ -22,7 +22,7 @@ router.get("/", limitValidation, listingController.getListingsWithLimit);
 router.post("/", createListingValidation, listingController.createListing);
 
 // Update a listing by ID
-router.put(
+router.patch(
   "/:listingId",
   updateListingValidation,
   listingController.updateListingById

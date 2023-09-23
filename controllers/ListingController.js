@@ -73,7 +73,7 @@ exports.createListing = async (req, res) => {
   }
 };
 
-// [PUT] Update a listing by ID
+// [PATCH] Update a listing by ID
 exports.updateListingById = async (req, res) => {
   const listingId = req.params.listingId;
   const updateFields = ["listingName", "description", "price", "status"];
