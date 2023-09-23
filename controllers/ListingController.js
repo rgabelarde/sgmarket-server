@@ -11,7 +11,7 @@ exports.getListingById = async (req, res) => {
     if (!listingId) {
       throw new Error4xx("listingId parameter is missing in the URL");
     }
-    const listing = await Listing.findById(listingId).populate("seller");
+    const listing = await Listing.findById(listingId);
     if (!listing) {
       throw new NotFoundError("Listing not found");
     }

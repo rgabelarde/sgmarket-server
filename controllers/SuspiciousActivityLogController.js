@@ -39,7 +39,7 @@ exports.getAllSuspiciousActivityLogsByUserId = async (req, res) => {
     }
 
     // Retrieve all suspicious activity logs for the user
-    const logs = await SuspiciousActivityLog.find({ userId: user._id });
+    const logs = await SuspiciousActivityLog.find({ user: user._id });
 
     res.json(logs);
   } catch (error) {
@@ -68,7 +68,7 @@ exports.createSuspiciousActivityLog = async (req, res) => {
     }
 
     const newLogData = {
-      userId: user._id,
+      user: user._id,
       reportedBy: reportedBy || "System Generated",
       reason,
     };
@@ -121,7 +121,7 @@ exports.getSuspiciousActivityLogsByDateRange = async (req, res) => {
 
     // Define a date range query
     const dateQuery = {
-      userId: user._id,
+      user: user._id,
       reportedOn: {
         $gte: new Date(startDate),
         $lte: new Date(endDate),

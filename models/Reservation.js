@@ -6,7 +6,7 @@ const reservationSchema = new mongoose.Schema({
     ref: "Listing",
     required: true,
   },
-  buyerId: {
+  buyer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -45,8 +45,8 @@ const reservationSchema = new mongoose.Schema({
   },
 });
 
-// Create a compound unique index on 'listingId' and 'buyerId'
-reservationSchema.index({ listingId: 1, buyerId: 1 }, { unique: true });
+// Create a compound unique index on 'listingId' and 'buyer'
+reservationSchema.index({ listingId: 1, buyer: 1 }, { unique: true });
 
 const Reservation = mongoose.model("Reservation", reservationSchema);
 

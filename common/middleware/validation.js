@@ -93,6 +93,18 @@ exports.uuidValidation = [
     .custom(validate(isUUIDv4, "Must be a valid UUIDv4")),
 ];
 
+exports.mongoIdValidation = [
+  param("userId").custom(validate(isMongoId, "ID must be a valid MongoDB ID")),
+];
+
+exports.createUserValidation = [
+  check("uuid").exists().isUUID(4).withMessage("UUID must be a valid UUIDv4"),
+  check("email").exists().isString().withMessage("Email is required"),
+  check("username").exists().isString().withMessage("Username is required"),
+  check("biometricVerified").isString().optional(),
+  check("flags").isString().optional(),
+];
+
 // Message Validations
 exports.getMessagesInChatValidation = [
   // Built-in validation for MongoDB ID
@@ -104,14 +116,40 @@ exports.getMessagesInChatValidation = [
     .withMessage("UUID must be a valid UUIDv4 in the request query"),
 ];
 
-exports.createMessageInChatValidation = [
+exports.sellerMessageInChatValidation = [
   // Built-in validation for MongoDB ID
   param("listingId")
     .isMongoId()
     .withMessage("Listing ID must be a valid MongoDB ID"),
+  check("chatId")
+    .isMongoId()
+    .optional()
+    .withMessage("chat ID must be a valid MongoDB ID"),
   check("buyerUUID")
     .isUUID(4)
-    .withMessage("Sender UUID must be a valid UUIDv4"),
+    .optional()
+    .withMessage("Recipent's (Buyer) UUID must be a valid UUIDv4"),
+  check("sellerUUID")
+    .isUUID(4)
+    .optional()
+    .withMessage("Sender's (Seller) UUID must be a valid UUIDv4"),
+  check("content").custom(
+    validate(
+      isNonEmptyString,
+      "Message content is required and must be a non-empty string"
+    )
+  ),
+];
+
+exports.buyerMessageInChatValidation = [
+  // Built-in validation for MongoDB ID
+  param("listingId")
+    .isMongoId()
+    .withMessage("Listing ID must be a valid MongoDB ID"),
+  check("uuid")
+    .exists()
+    .isUUID(4)
+    .withMessage("Sender's (buyer) UUID must be a valid UUIDv4"),
   check("content").custom(
     validate(
       isNonEmptyString,
@@ -125,21 +163,29 @@ exports.createReservationValidation = [
   body("listingId")
     .isMongoId()
     .withMessage("Listing ID must be a valid MongoDB ID"),
-  body("buyerUUID")
+  query("buyerUUID")
+    .exists()
     .isUUID(4)
-    .withMessage("UUID must be a valid UUIDv4 in the request body"),
-  body("isMailing").isBoolean().withMessage("isMailing must be a boolean"),
-  body("priceOffer").isNumeric().withMessage("Price offer must be a number"),
+    .withMessage("UUID must be a valid UUIDv4 in the request query"),
+  body("isMailing")
+    .exists()
+    .isBoolean()
+    .withMessage("isMailing must be a boolean"),
+  body("priceOffer")
+    .exists()
+    .isNumeric()
+    .withMessage("Price offer must be a number"),
 ];
 
 exports.updateReservationValidation = [
   check("reservationId")
     .isMongoId()
     .withMessage("Reservation ID must be a valid MongoDB ID"),
-  body("approvalStatus").isString().optional(),
+  query("buyerUUID")
+    .exists()
+    .isUUID(4)
+    .withMessage("UUID must be a valid UUIDv4 in the request query"),
   body("isMailing").isBoolean().optional(),
   body("meetupLocation").isString().optional(),
-  body("paymentStatus").isString().optional(),
   body("priceOffer").isNumeric().optional(),
-  body("isReceived").isBoolean().optional(),
 ];

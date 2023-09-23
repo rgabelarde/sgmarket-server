@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 const suspiciousActivityLogSchema = new mongoose.Schema({
-  userId: {
-    type: String,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   reportedBy: {

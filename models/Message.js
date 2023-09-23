@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
-  chatId: {
+  linkedChat: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Chat",
     required: true,

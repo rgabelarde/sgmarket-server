@@ -2,6 +2,23 @@ const User = require("../models/User");
 const { NotFoundError, Error4xx } = require("../common/utils/errorValues");
 const { handleError } = require("../common/utils/errorHandler");
 
+// [GET] Get a user by user_id (mongoId)
+exports.getUserById = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    if (!userId) {
+      throw new Error4xx("userId parameter is missing in the URL");
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    res.json(user);
+  } catch (error) {
+    handleError(res, error);
+  }
+};
 // [GET] Get a user by UUID
 exports.getUserByUuid = async (req, res) => {
   const uuid = req.params.uuid;

@@ -24,18 +24,22 @@ class Error4xx extends Error {
         this.name = "EmptyFieldError";
         break;
 
+      case "userId parameter is missing in the URL":
       case "UUID parameter is missing from the URL":
       case "Reservation Id is missing from the URL":
       case "logId parameter is missing from the URL":
       case "listingId parameter is missing from the URL":
+      case "buyerUUID parameter is missing from the URL":
         this.name = "URLParamMissingError";
         break;
 
       case "UUID and reason are required request body fields":
       case "UUID is a required request body field":
-      case "listingId, buyerUUID, isMailing, and priceOffer are required request body fields":
+      case "listingId, isMailing, and priceOffer are required request body fields":
       case "No parameters provided for update, request body is empty":
-      case "buyerUUID and content are required request body fields":
+      case "UUID (buyer's) and content are required request body fields":
+      case "UUID (buyer's) OR chatId are required request body fields":
+      case "Content in message is a required request body field":
       case "UUID, listingName, and price are required request body fields":
         this.name = "ReqBodyParamMissingError";
         break;
@@ -52,13 +56,27 @@ class Error4xx extends Error {
         this.statusCode = 412;
         break;
 
+      case "sellerUUID does not match listing owner's uuid":
+        this.name = "InvalidDataError";
+        this.statusCode = 412;
+        break;
+
+      case "Existing reservation for this item exists, use update instead":
       case "Cannot approve reservation for a listing with status other than 'available'":
+      case "Listing has already been successfully reserved or sold":
+      case "Unable to update reservation info for item that has been received":
         this.name = "ItemReservedError";
         break;
 
       case "User with the same username (case insensitive), email, or uuid already exists":
         this.name = "DuplicateUserCreationError";
         this.statusCode = 409;
+        break;
+
+      case "You do not have permission to access these reservations":
+      case "Cannot make changes to others' reservations":
+        this.name = "UnauthorizedOrRestrictedAccess";
+        this.statusCode = 401;
         break;
 
       default:

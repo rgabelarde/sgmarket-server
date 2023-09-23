@@ -28,7 +28,6 @@ const listingSchema = new mongoose.Schema({
     get: (value) => value.toFixed(2),
     set: (value) => parseFloat(value.toFixed(2)),
   },
-  reservations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reservation" }],
 });
 
 const Listing = mongoose.model("Listing", listingSchema);
