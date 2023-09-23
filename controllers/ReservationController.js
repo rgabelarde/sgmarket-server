@@ -9,18 +9,41 @@ const handleError = (res, statusCode, message) => {
 export const getReservationById = async (req, res) => {
   const { reservationId } = req.params;
 
+  if (!reservationId) {
+    handleError(res, 400, "Please provide a reservation Id!");
+  }
+
   try {
     const reservation = await Reservation.findById(reservationId);
 
     if (!reservation) {
-      return handleError(res, 404, "Reservation not found");
+      handleError(res, 404, "Reservation not found");
     }
 
     res.json(reservation);
   } catch (error) {
-    return handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, 500, error.message ?? "Internal Server Error");
   }
 };
+
+// [GET] Get all reservations by Listing ID
+export const getReservationsByListingId = async (req, res) => {
+  const { listingId } = req.params;
+
+  if (!listingId) {
+    handleError(res, 400, "Please provide a reservation Id!");
+  }
+
+  try {
+    // Find all reservations with the given listingId
+    const reservations = await Reservation.find({ listingId });
+
+    res.json(reservations);
+  } catch (error) {
+    handleError(res, 500, error.message ?? "Internal Server Error");
+  }
+};
+
 // [POST] Create a new reservation
 export const createReservation = async (req, res) => {
   const { listingId, uuid, isMailing, meetupLocation, priceOffer } = req.body;
@@ -28,7 +51,7 @@ export const createReservation = async (req, res) => {
   try {
     // Check if required fields are missing
     if (!listingId || !uuid || isMailing === undefined || !priceOffer) {
-      return handleError(
+      handleError(
         res,
         400,
         "listingId, uuid, isMailing, and priceOffer are required fields"
@@ -61,11 +84,11 @@ export const createReservation = async (req, res) => {
 
     res.status(201).json(savedReservation);
   } catch (error) {
-    return handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, 500, error.message ?? "Internal Server Error");
   }
 };
 
-// [PUT] Update a reservation by ID
+// [PATCH] Update a reservation by ID
 export const updateReservationById = async (req, res) => {
   const { reservationId } = req.params;
   const updateFields = [
@@ -87,7 +110,19 @@ export const updateReservationById = async (req, res) => {
 
   try {
     if (Object.keys(updatedFields).length === 0) {
-      return handleError(res, 400, "No fields provided for update");
+      handleError(res, 400, "No fields provided for update");
+    }
+
+    // Check if approvalStatus is being changed to 'approved'
+    if (
+      updatedFields.approvalStatus === "approved" &&
+      (await isListingStatusNotAvailable(updatedFields.listingId))
+    ) {
+      handleError(
+        res,
+        400,
+        "Cannot approve reservation for a listing with status other than 'available'"
+      );
     }
 
     const updatedReservation = await Reservation.findByIdAndUpdate(
@@ -97,11 +132,18 @@ export const updateReservationById = async (req, res) => {
     );
 
     if (!updatedReservation) {
-      return handleError(res, 404, "Reservation not found");
+      handleError(res, 404, "Reservation not found");
     }
 
     res.json(updatedReservation);
   } catch (error) {
-    return handleError(res, 500, error.message ?? "Internal Server Error");
+    handleError(res, 500, error.message ?? "Internal Server Error");
   }
+};
+
+// Helper function to check if listing status is not 'available'
+const isListingStatusNotAvailable = async (listingId) => {
+  const listing = await Listing.findById(listingId);
+
+  return listing ? listing.status !== "available" : false;
 };
