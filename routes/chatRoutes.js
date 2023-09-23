@@ -4,13 +4,13 @@ const chatController = require("../controllers/ChatController");
 
 const {
   listingIdValidation,
-  currentUserIdValidation,
+  queryUserUUIDValidation,
 } = require("./middleware/validation");
 
 // Route to get a chat for a specific listing involving the current user and another user
 router.get(
   "/:listingId",
-  [...listingIdValidation, ...currentUserIdValidation],
+  [...listingIdValidation, ...queryUserUUIDValidation],
   chatController.getChatForListing
 );
 

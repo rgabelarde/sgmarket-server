@@ -21,12 +21,12 @@ exports.findUserByUuid = async (req, res) => {
   }
 };
 
-// [GET] Get a user by unique userId
-exports.getUserById = async (req, res) => {
-  const userId = req.params.userId;
+// [GET] Get a user by UUID
+exports.getUserByUuid = async (req, res) => {
+  const { uuid } = req.params;
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findOne({ uuid });
     if (!user) {
       handleError(res, 404, "User not found");
     } else {

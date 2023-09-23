@@ -18,16 +18,37 @@ const isPositiveInteger = (value) => /^\d+$/.test(value) && parseInt(value) > 0;
 const isNonNegativeNumber = (value) =>
   !isNaN(parseFloat(value)) && parseFloat(value) >= 0;
 
+// Suspicious Activity Log Validations
+exports.suspiciousActivityLogIdValidation = [
+  param("logId").custom(
+    validate(isMongoId, "Log ID must be a valid MongoDB ID")
+  ),
+];
+
+exports.suspiciousActivityLogValidation = [
+  body("userId").exists().withMessage("User ID is required"),
+  body("reason")
+    .exists()
+    .withMessage("Reason is required")
+    .isString()
+    .withMessage("Reason must be a string"),
+  body("reportedBy")
+    .optional()
+    .isString()
+    .withMessage("Reported by must be a string"),
+];
+
 // Chats Validations
 exports.listingIdValidation = [
   param("listingId").custom(
     validate(isMongoId, "ID must be a valid MongoDB ID")
   ),
 ];
-exports.currentUserIdValidation = [
+exports.queryUserUUIDValidation = [
   query("uuid")
-    .isUUID(4)
-    .withMessage("Current user UUID must be a valid UUIDv4"),
+    .exists()
+    .withMessage("UUID is required")
+    .custom(validate(isUUIDv4, "Must be a valid UUIDv4")),
 ];
 
 // Listing Validations
@@ -66,11 +87,10 @@ exports.updateListingValidation = [
 
 // User Validations
 exports.uuidValidation = [
-  param("uuid").isUUID(4).withMessage("UUID must be a valid UUIDv4"),
-];
-exports.userIdValidation = [
-  // Built-in validation for MongoDB ID
-  param("userId").isMongoId().withMessage("User ID must be a valid MongoDB ID"),
+  param("uuid")
+    .exists()
+    .withMessage("UUID is required")
+    .custom(validate(isUUIDv4, "Must be a valid UUIDv4")),
 ];
 
 // Message Validations

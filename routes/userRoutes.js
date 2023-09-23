@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/UserController");
-const { uuidValidation, userIdValidation } = require("./middleware/validation");
+const { uuidValidation } = require("./middleware/validation");
 
 // Get a user by UUID
 router.get("/get/:uuid", uuidValidation, userController.findUserByUuid);
 
 // Get a user by userId
-router.get("/get/:userId", userIdValidation, userController.getUserById);
+router.get("/get/:uuid", uuidValidation, userController.getUserByUuid);
 
 // Create a new user
 router.post("/onboard", userController.createUser);
