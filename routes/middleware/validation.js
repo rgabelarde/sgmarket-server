@@ -117,3 +117,27 @@ exports.createMessageInChatValidation = [
     )
   ),
 ];
+
+// Reservation Validations
+exports.createReservationValidation = [
+  body("listingId")
+    .isMongoId()
+    .withMessage("Listing ID must be a valid MongoDB ID"),
+  body("uuid")
+    .isUUID(4)
+    .withMessage("UUID must be a valid UUIDv4 in the request body"),
+  body("isMailing").isBoolean().withMessage("isMailing must be a boolean"),
+  body("priceOffer").isNumeric().withMessage("Price offer must be a number"),
+];
+
+exports.updateReservationValidation = [
+  check("reservationId")
+    .isMongoId()
+    .withMessage("Reservation ID must be a valid MongoDB ID"),
+  body("approvalStatus").isString().optional(),
+  body("isMailing").isBoolean().optional(),
+  body("meetupLocation").isString().optional(),
+  body("paymentStatus").isString().optional(),
+  body("priceOffer").isNumeric().optional(),
+  body("isReceived").isBoolean().optional(),
+];
