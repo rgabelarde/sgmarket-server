@@ -7,11 +7,11 @@ const { handleError } = require("../common/utils/errorHandler");
 // [GET] Get a reservation by ID
 exports.getReservationById = async (req, res) => {
   const reservationId = req.params.reservationId;
-  if (!reservationId) {
-    throw new Error4xx("Reservation Id is missing from the URL");
-  }
 
   try {
+    if (!reservationId) {
+      throw new Error4xx("Reservation Id is missing from the URL");
+    }
     const reservation = await Reservation.findById(reservationId);
     if (!reservation) {
       throw new NotFoundError("Reservation not found");
@@ -26,14 +26,14 @@ exports.getReservationById = async (req, res) => {
 // [GET] Get all reservations by Listing ID
 exports.getReservationsByListingId = async (req, res) => {
   const listingId = req.params.listingId;
-  if (!listingId) {
-    throw new Error4xx("listingId parameter is missing from the URL");
-  }
 
   try {
+    if (!listingId) {
+      throw new Error4xx("listingId parameter is missing from the URL");
+    }
+
     // Find all reservations with the given listingId
     const reservations = await Reservation.find({ listingId });
-
     res.json(reservations);
   } catch (error) {
     handleError(res, error);
@@ -94,9 +94,7 @@ exports.createReservation = async (req, res) => {
 // [PATCH] Update a reservation by ID
 exports.updateReservationById = async (req, res) => {
   const reservationId = req.params.reservationId;
-  if (!reservationId) {
-    throw new Error4xx("Reservation Id is missing from the URL");
-  }
+
   const updateFields = [
     "approvalStatus",
     "isMailing",
@@ -115,6 +113,9 @@ exports.updateReservationById = async (req, res) => {
   }
 
   try {
+    if (!reservationId) {
+      throw new Error4xx("Reservation Id is missing from the URL");
+    }
     if (Object.keys(updatedFields).length === 0) {
       throw new Error4xx(
         "No parameters provided for update, request body is empty"

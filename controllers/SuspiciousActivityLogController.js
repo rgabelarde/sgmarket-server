@@ -7,11 +7,10 @@ const { handleError } = require("../common/utils/errorHandler");
 exports.getSuspiciousActivityLogById = async (req, res) => {
   const logId = req.params.logId;
 
-  if (!logId) {
-    throw new Error4xx("logId parameter is missing from the URL");
-  }
-
   try {
+    if (!logId) {
+      throw new Error4xx("logId parameter is missing from the URL");
+    }
     const log = await SuspiciousActivityLog.findById(logId);
 
     if (!log) {
@@ -28,11 +27,10 @@ exports.getSuspiciousActivityLogById = async (req, res) => {
 exports.getAllSuspiciousActivityLogsByUserId = async (req, res) => {
   const uuid = req.params.uuid;
 
-  if (!uuid) {
-    throw new Error4xx("UUID parameter is missing from the URL");
-  }
-
   try {
+    if (!uuid) {
+      throw new Error4xx("UUID parameter is missing from the URL");
+    }
     // Check if the user with the specified UUID exists
     const user = await User.findOne({ uuid });
 

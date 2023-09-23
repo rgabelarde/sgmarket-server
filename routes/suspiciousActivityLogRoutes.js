@@ -8,35 +8,35 @@ const {
 
 const router = express.Router();
 
-// Get a suspicious activity log by ID
+// [GET] Get a suspicious activity log by ID
 router.get(
   "/log/:logId",
   suspiciousActivityLogIdValidation,
   suspiciousActivityLogController.getSuspiciousActivityLogById
 );
 
-// Get all suspicious activity logs of a single user by UUID
+// [GET] Get all suspicious activity logs of a single user by UUID
 router.get(
   "/user/:uuid/logs",
   uuidValidation,
   suspiciousActivityLogController.getAllSuspiciousActivityLogsByUserId
 );
 
-// Create a new suspicious activity log
+// [POST] Create a new suspicious activity log
 router.post(
   "/log",
   suspiciousActivityLogValidation,
   suspiciousActivityLogController.createSuspiciousActivityLog
 );
 
-// Delete a suspicious activity log by ID
+// [DELETE] Delete a suspicious activity log by ID
 router.delete(
   "/log/:logId",
   suspiciousActivityLogIdValidation,
   suspiciousActivityLogController.deleteSuspiciousActivityLogById
 );
 
-// Get suspicious activity logs by date range
+// [GET] Get suspicious activity logs by date range
 router.get(
   "/user/:uuid/logs/range",
   uuidValidation,

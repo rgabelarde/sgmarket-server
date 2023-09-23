@@ -6,14 +6,14 @@ const {
   createMessageInChatValidation,
 } = require("../common/middleware/validation");
 
-// Get all messages involving the current user and another user for a specific listing
+// [GET] Get all messages involving the current user and another user for a specific listing
 router.get(
   "/:listingId",
   getMessagesInChatValidation,
   messageController.getMessagesInChatForListing
 );
 
-// Create a new message in a chat regarding a unique listing
+// [POST] Create a new message in a chat regarding a unique listing
 // (if chat is new, create a new chat object as well)
 router.post(
   "/new/:listingId",

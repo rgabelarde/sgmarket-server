@@ -8,10 +8,10 @@ const {
   uuidValidation,
 } = require("../common/middleware/validation");
 
-// Add a new route to get all chats for a specific user's UUID
+// [GET] Get all chats for a specific user's UUID
 router.get("/get/all/:uuid", uuidValidation, chatController.getChatsForUser);
 
-// Route to get a chat for a specific listing involving the current user and another user
+// [GET] Get a chat for a specific listing involving the current user and another user
 router.get(
   "/:listingId",
   [...listingIdValidation, ...queryUserUUIDValidation],
