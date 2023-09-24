@@ -1,0 +1,2177 @@
+{
+	"info": {
+		"_postman_id": "af5f18ee-fc1b-47bc-b2d0-e7a4b7207503",
+		"name": "SG Market",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11465507"
+	},
+	"item": [
+		{
+			"name": "Happy Path",
+			"item": [
+				{
+					"name": "1. Create New User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.response.code === 201) {",
+									"  pm.environment.set('currentUUID', pm.response.json().uuid);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"test user\",\n  \"email\": \"newuser@example.com\",\n  \"biometricVerified\": true,\n  \"flags\": 0,\n  \"uuid\": \"73c4922b-bc6b-462a-a9ef-769884d963d1\"\t// get from singpass + my info verification\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/user/onboard",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"onboard"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1b. Check that user has been created (Get Existing User)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/user/view/uuid/{{currentUUID}}",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"user",
+								"view",
+								"uuid",
+								"{{currentUUID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get x number of listing",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"rachel99\",\n\t\"email\": \"rachel99@gmail.com\",\n\t\"biometricVerified\": true,\n\t\"flags\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/listing/view?limit=3",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"listing",
+								"view"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3a. Post a listing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"listingName\": \"cup\",\n\t\"description\": \"Condition 5/10\",\n\t\"price\": 50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/listing/new?uuid=73c4922b-bc6b-462a-a9ef-769884d963d1",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"listing",
+								"new"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "73c4922b-bc6b-462a-a9ef-769884d963d1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3b. View an item/listing",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/listing/view/650ecbad2060ee1dd33957e1",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"listing",
+								"view",
+								"650ecbad2060ee1dd33957e1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Send a message to the listing's seller",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n\t\"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n\t\"content\": \"Hi can you send some pictures of this item\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/messages/buy/650ecbee2060ee1dd33957f0",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"messages",
+								"buy",
+								"650ecbee2060ee1dd33957f0"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "4a. Send a message to the listing's seller [Sending without chatId]",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n\t\"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n\t\"content\": \"Hi can you send some pictures of this item\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/messages/buy/650ecbee2060ee1dd33957f0",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"messages",
+										"buy",
+										"650ecbee2060ee1dd33957f0"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "218"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"da-xDOfpFU/srCizDy4Bfxq7SPYNSM\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 23 Sep 2023 17:42:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"chatId\": \"650f1547efbe35e3ef751344\",\n    \"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n    \"content\": \"Hi can you send some pictures of this item\",\n    \"_id\": \"650f2388421d76346ea576ac\",\n    \"timestamp\": \"2023-09-23T17:42:32.989Z\",\n    \"__v\": 0\n}"
+						},
+						{
+							"name": "4b. Send a message to the listing's seller [Send with specified chatId]",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n\t\"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n\t\"content\": \"Hi can you send some pictures of this item\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/messages/buy/650ecbee2060ee1dd33957f0",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"messages",
+										"buy",
+										"650ecbee2060ee1dd33957f0"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "218"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"da-xDOfpFU/srCizDy4Bfxq7SPYNSM\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 23 Sep 2023 17:42:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"chatId\": \"650f1547efbe35e3ef751344\",\n    \"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n    \"content\": \"Hi can you send some pictures of this item\",\n    \"_id\": \"650f2388421d76346ea576ac\",\n    \"timestamp\": \"2023-09-23T17:42:32.989Z\",\n    \"__v\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "5. Seller sends messages for a listing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n\t\"buyerUUID\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n\t\"content\": \"Are you there?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/messages/new/650ecb882060ee1dd33957d5",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"messages",
+								"new",
+								"650ecb882060ee1dd33957d5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. View messages between user and other seller/buyer for specific listing",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/messages/view/650ecbee2060ee1dd33957f0?uuid=87035946-504e-4aa7-9d5b-723905b7444d",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"messages",
+								"view",
+								"650ecbee2060ee1dd33957f0"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "87035946-504e-4aa7-9d5b-723905b7444d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6b. View ALL chats between user and other seller/buyers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/chats/view/all/87035946-504e-4aa7-9d5b-723905b7444d",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"chats",
+								"view",
+								"all",
+								"87035946-504e-4aa7-9d5b-723905b7444d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Reserve an item (use listingId)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isMailing\": true,\n\t\"priceOffer\": 40\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/reservation/reserve/650ecbad2060ee1dd33957e1?buyerUUID=87035946-504e-4aa7-9d5b-723905b7444d",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"reservation",
+								"reserve",
+								"650ecbad2060ee1dd33957e1"
+							],
+							"query": [
+								{
+									"key": "buyerUUID",
+									"value": "87035946-504e-4aa7-9d5b-723905b7444d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7b. Make changes to reservation made (use reservationId)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"Made up location123\",\n\t\"priceOffer\": 40\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/reservation/update/650f500559f4037c1247fe19?buyerUUID",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"reservation",
+								"update",
+								"650f500559f4037c1247fe19"
+							],
+							"query": [
+								{
+									"key": "buyerUUID",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8. Seller chooses to view all reservations",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"random residential area\", \n\t\"priceOffer\": 40\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/reservation/view/all/650ecbad2060ee1dd33957e1?uuid=9ad294c8-945a-4bf7-852a-abe3ed478b13",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"reservation",
+								"view",
+								"all",
+								"650ecbad2060ee1dd33957e1"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9. Seller chooses to accept a reservation (use reservationId)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"approvalStatus\": \"approved\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/reservation/update/approval/650f654222107f3eb069a3e5?uuid=9ad294c8-945a-4bf7-852a-abe3ed478b13",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"reservation",
+								"update",
+								"approval",
+								"650f654222107f3eb069a3e5"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "10. Buyer makes payment",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"paymentStatus\": \"completed\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/reservation/update/payment/650f654222107f3eb069a3e5?buyerUUID=a18d8672-126d-4122-94a1-2f91990838c6",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"reservation",
+								"update",
+								"payment",
+								"650f654222107f3eb069a3e5"
+							],
+							"query": [
+								{
+									"key": "buyerUUID",
+									"value": "a18d8672-126d-4122-94a1-2f91990838c6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11. Buyer confirms received",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isReceived\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/reservation/update/received/650f654222107f3eb069a3e5?buyerUUID=a18d8672-126d-4122-94a1-2f91990838c6",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"reservation",
+								"update",
+								"received",
+								"650f654222107f3eb069a3e5"
+							],
+							"query": [
+								{
+									"key": "buyerUUID",
+									"value": "a18d8672-126d-4122-94a1-2f91990838c6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[ANYTIME] Get specific activity log (report)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/report/view/650f6f69b941d2c9a5510d36",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"report",
+								"view",
+								"650f6f69b941d2c9a5510d36"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[ANYTIME]  Create a new suspicious activity log report",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n  \"reason\": \"Suspicious activity reason here\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/report/create/log",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"report",
+								"create",
+								"log"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[ANYTIME] Get ALL activity log (report) for specific user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/report//view/all/user/87035946-504e-4aa7-9d5b-723905b7444d/",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"report",
+								"",
+								"view",
+								"all",
+								"user",
+								"87035946-504e-4aa7-9d5b-723905b7444d",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[ANYTIME] Get specific activity log (report) within date range for specific user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/report/view/range/user/87035946-504e-4aa7-9d5b-723905b7444d/?startDate=2023-01-01&endDate=2024-01-01",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"report",
+								"view",
+								"range",
+								"user",
+								"87035946-504e-4aa7-9d5b-723905b7444d",
+								""
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2023-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-01-01"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "All Functions",
+			"item": [
+				{
+					"name": "Messages",
+					"item": [
+						{
+							"name": "Errors",
+							"item": [
+								{
+									"name": "4x.1 Sending message for your own item (to yourself)",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{ \n\t\"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n\t\"content\": \"Hi can you send some pictures of this item\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/messages/buy/650ecbee2060ee1dd33957f0",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"messages",
+												"buy",
+												"650ecbee2060ee1dd33957f0"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4x.2 Sending message with no specified chatId OR uuid (Buyer's)",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{ \n\t\"content\": \"Hi can you send some pictures of this item\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/messages/buy/650ecbee2060ee1dd33957f0",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"messages",
+												"buy",
+												"650ecbee2060ee1dd33957f0"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4x.2 Sending message with no content",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{ \n\t\"content\": \"Hi can you send some pictures of this item\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/messages/buy/650ecbee2060ee1dd33957f0",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"messages",
+												"buy",
+												"650ecbee2060ee1dd33957f0"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5x.1 If buyerUUID specified, uuid cannot be listing owner's uuid",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{ \n\t\"sellerUUID\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\t// non-owner uuid\n\t\"buyerUUID\": \"87035946-504e-4aa7-9d5b-7f3905b77d4d\",\t//listing owner's uuid\n\t\"content\": \"testing message\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/messages/sell/650ecbee2060ee1dd33957f0",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"messages",
+												"sell",
+												"650ecbee2060ee1dd33957f0"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5x.2 If sellerUUID specified, uuid must be listing owner's uuid",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{ \n\t\"sellerUUID\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\t// non-owner uuid\n\t\"buyerUUID\": \"21a152d7-55f4-42b7-938c-666c92f0e18e\",\t// OTHER non-owner's uuid\n\t\"content\": \"testing message\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/messages/sell/650ecbee2060ee1dd33957f0",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"messages",
+												"sell",
+												"650ecbee2060ee1dd33957f0"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5x.3 Message content must exist",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{ \n\t\"buyerUUID\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\t// owner uuid\n\t\"sellerUUID\": \"87035946-504e-4aa7-9d5b-7f3905b77d4d\"\t//non- owner's uuid\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/messages/sell/650ecbee2060ee1dd33957f0",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"messages",
+												"sell",
+												"650ecbee2060ee1dd33957f0"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Send a message to listing's seller",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n\t\"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n\t\"content\": \"Hi can you send some pictures of this item\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/messages/buy/650ecbee2060ee1dd33957f0",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"messages",
+										"buy",
+										"650ecbee2060ee1dd33957f0"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "View messages for specified user for specific listing",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n\t\"buyerUUID\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n\t\"content\": \"Are you there?\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/messages/new/650ecb882060ee1dd33957d5",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"messages",
+										"new",
+										"650ecb882060ee1dd33957d5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Send a message to a buyer (must specify chatId OR buyerUUID)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n\t\"buyerUUID\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n\t\"content\": \"Testing\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/messages/sell/650ecb882060ee1dd33957d5",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"messages",
+										"sell",
+										"650ecb882060ee1dd33957d5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "Errors",
+							"item": [
+								{
+									"name": "1x.1 Creating user when they already exist - existing uuid/email/username (regardless of casing)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 201) {",
+													"  pm.environment.set('currentUUID', pm.response.json().uuid);",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"biometricVerified\": true,\n  \"flags\": 0,\n  \"uuid\": \"73c4922b-bc6b-462a-a9ef-769884d963d1\"\t// get from singpass + my info verification\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/user/onboard",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"user",
+												"onboard"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "1x.2 Missing required information",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 201) {",
+													"  pm.environment.set('currentUUID', pm.response.json().uuid);",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"test93i205049235904389085\",\n  \"biometricVerified\": true,\n  \"flags\": 0,\n  \"uuid\": \"dafe4d4b-66a3-4418-9c07-e321ee58d965\"\t// get from singpass + my info verification\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/user/onboard",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"user",
+												"onboard"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "1x.3 Invalid UUID",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 201) {",
+													"  pm.environment.set('currentUUID', pm.response.json().uuid);",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"testuser1234324\",\n  \"email\": \"test1234@example.com\",\n  \"biometricVerified\": true,\n  \"flags\": 0,\n  \"uuid\": \"random UUID??\"\t// get from singpass + my info verification\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/user/onboard",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"user",
+												"onboard"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Create new user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if(pm.response.code === 201) {",
+											"  pm.environment.set('currentUUID', pm.response.json().uuid);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"biometricVerified\": true,\n  \"flags\": 0,\n  \"uuid\": \"73c4922b-bc6b-462a-a9ef-769884d963d1\"\t// get from singpass + my info verification\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/user/onboard",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"user",
+										"onboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get existing User using UUID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/user/view/uuid/{{currentUUID}}",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"user",
+										"view",
+										"uuid",
+										"{{currentUUID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get existing User using userId (mongoId)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/user/view/id/650ec4dbb2c589df5be51ab8",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"user",
+										"view",
+										"id",
+										"650ec4dbb2c589df5be51ab8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete existing user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if(pm.response.code === 200) {",
+											"  pm.environment.set('currentUUID', pm.response.json().uuid);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/user/delete/73c4922b-bc6b-462a-a9ef-769884d963d1",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"user",
+										"delete",
+										"73c4922b-bc6b-462a-a9ef-769884d963d1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update user information (editable ones)",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t// \"username\": \"rachel99\",\n\t// \"email\": \"rachel99@gmail.com\",\n\t\"biometricVerified\": true\n\t// \"flags\": 0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/user/update/{{currentUUID}}",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"user",
+										"update",
+										"{{currentUUID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Listings",
+					"item": [
+						{
+							"name": "Errors",
+							"item": [
+								{
+									"name": "3x. View an item/listing (invalid listingId)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/listing/view/test13243214",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"listing",
+												"view",
+												"test13243214"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Get x number of listings",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"username\": \"rachel99\",\n\t\"email\": \"rachel99@gmail.com\",\n\t\"biometricVerified\": true,\n\t\"flags\": 0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/listing/view?limit=3",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"listing",
+										"view"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "View an item/listing (using listingId)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/listing/view/650ecbbc2060ee1dd33957e4",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"listing",
+										"view",
+										"650ecbbc2060ee1dd33957e4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post a listing",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"listingName\": \"cup\",\n\t\"description\": \"Condition 5/10\",\n\t\"price\": 50\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/listing/new?uuid=73c4922b-bc6b-462a-a9ef-769884d963d1",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"listing",
+										"new"
+									],
+									"query": [
+										{
+											"key": "uuid",
+											"value": "73c4922b-bc6b-462a-a9ef-769884d963d1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reservations",
+					"item": [
+						{
+							"name": "Errors",
+							"item": [
+								{
+									"name": "7x. Invalid listingId when reserving an item",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"random residential area\", // required if not mailing!\n\t\"priceOffer\": 40\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/reserve/test13243214?buyerUUID=87035946-504e-4aa7-9d5b-723905b7444d",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"reserve",
+												"test13243214"
+											],
+											"query": [
+												{
+													"key": "buyerUUID",
+													"value": "87035946-504e-4aa7-9d5b-723905b7444d"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7x. Reservation already made by same buyer before",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"random residential area\", \n\t\"priceOffer\": 40\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/reserve/650ecce12060ee1dd3395826?buyerUUID=87035946-504e-4aa7-9d5b-723905b7444d",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"reserve",
+												"650ecce12060ee1dd3395826"
+											],
+											"query": [
+												{
+													"key": "buyerUUID",
+													"value": "87035946-504e-4aa7-9d5b-723905b7444d"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7x. buyerUUID belongs to listing owner",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"random residential area\", // required if not mailing!\n\t\"priceOffer\": 40\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/reserve/650ecce12060ee1dd3395826?buyerUUID=c82cfe96-f97e-4acf-ac6a-8547d3eb4609",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"reserve",
+												"650ecce12060ee1dd3395826"
+											],
+											"query": [
+												{
+													"key": "buyerUUID",
+													"value": "c82cfe96-f97e-4acf-ac6a-8547d3eb4609"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7x. transaction is for meetup but does not specify meetup point",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"isMailing\": false,\n\t\"priceOffer\": 40\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/reserve/650ecce12060ee1dd3395826?buyerUUID=9ad294c8-945a-4bf7-852a-abe3ed478b13",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"reserve",
+												"650ecce12060ee1dd3395826"
+											],
+											"query": [
+												{
+													"key": "buyerUUID",
+													"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7x. Reservation does not provide a price offer",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"random residential area\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/reserve/650ecce12060ee1dd3395826?buyerUUID=87035946-504e-4aa7-9d5b-723905b7444d",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"reserve",
+												"650ecce12060ee1dd3395826"
+											],
+											"query": [
+												{
+													"key": "buyerUUID",
+													"value": "87035946-504e-4aa7-9d5b-723905b7444d"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7x. Cannot make new reservations for already reserved items",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"random residential area\", \n\t\"priceOffer\": 40\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/reserve/650ecb882060ee1dd33957d5?buyerUUID=73c4922b-bc6b-462a-a9ef-769884d963d1",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"reserve",
+												"650ecb882060ee1dd33957d5"
+											],
+											"query": [
+												{
+													"key": "buyerUUID",
+													"value": "73c4922b-bc6b-462a-a9ef-769884d963d1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7bx. Cannot make changes to others' reservations (use reservationId)",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"Made up location123\",\n\t\"priceOffer\": 40\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/update/650f654222107f3eb069a3e5?buyerUUID=9ad294c8-945a-4bf7-852a-abe3ed478b13",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"update",
+												"650f654222107f3eb069a3e5"
+											],
+											"query": [
+												{
+													"key": "buyerUUID",
+													"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8x. Non-Seller CANNOT view all reservations",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"random residential area\", \n\t\"priceOffer\": 40\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/view/all/650ecbca2060ee1dd33957ea?uuid=a18d8672-126d-4122-94a1-2f91990838c6",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"view",
+												"all",
+												"650ecbca2060ee1dd33957ea"
+											],
+											"query": [
+												{
+													"key": "uuid",
+													"value": "a18d8672-126d-4122-94a1-2f91990838c6"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "9x. Cannot accept multiple reservations for items (use reservationId)",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"approvalStatus\": \"approved\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{origin}}/{{apiVersion}}/reservation/update/approval/650f654222107f3eb069a3e5?uuid=9ad294c8-945a-4bf7-852a-abe3ed478b13",
+											"host": [
+												"{{origin}}"
+											],
+											"path": [
+												"{{apiVersion}}",
+												"reservation",
+												"update",
+												"approval",
+												"650f654222107f3eb069a3e5"
+											],
+											"query": [
+												{
+													"key": "uuid",
+													"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Reserve an item",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"random residential area\", // required if not mailing!\n\t\"priceOffer\": 40\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/reservation/reserve/650ecbad2060ee1dd33957e1?buyerUUID=87035946-504e-4aa7-9d5b-723905b7444d",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"reservation",
+										"reserve",
+										"650ecbad2060ee1dd33957e1"
+									],
+									"query": [
+										{
+											"key": "buyerUUID",
+											"value": "87035946-504e-4aa7-9d5b-723905b7444d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "View All Reservations for a listingId",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "uuid",
+										"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/reservation/view/all/650ecbbc2060ee1dd33957e4?uuid=9ad294c8-945a-4bf7-852a-abe3ed478b13",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"reservation",
+										"view",
+										"all",
+										"650ecbbc2060ee1dd33957e4"
+									],
+									"query": [
+										{
+											"key": "uuid",
+											"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view ONE reservations as seller (specified reservation id)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/reservation/view/650f3c8d9bc321ea7afafa8a?uuid=9ad294c8-945a-4bf7-852a-abe3ed478b13",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"reservation",
+										"view",
+										"650f3c8d9bc321ea7afafa8a"
+									],
+									"query": [
+										{
+											"key": "uuid",
+											"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "view my reservation (specified reservation id)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/reservation/view/650f3c8d9bc321ea7afafa8a?uuid=a18d8672-126d-4122-94a1-2f91990838c6",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"reservation",
+										"view",
+										"650f3c8d9bc321ea7afafa8a"
+									],
+									"query": [
+										{
+											"key": "uuid",
+											"value": "a18d8672-126d-4122-94a1-2f91990838c6"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Make changes to own reservation made (use reservationId)",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"buyerUUID\":\"a18d8672-126d-4122-94a1-2f91990838c6\",\n\t\"isMailing\": false,\n\t\"meetupLocation\": \"Made up location12334\",\n\t\"priceOffer\": 40\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/reservation/update/650ecbad2060ee1dd33957e1",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"reservation",
+										"update",
+										"650ecbad2060ee1dd33957e1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Accept a reservation (use reservationId) [Seller]",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"approvalStatus\": \"approved\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/reservation/update/approval/650f654222107f3eb069a3e5?uuid=9ad294c8-945a-4bf7-852a-abe3ed478b13",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"reservation",
+										"update",
+										"approval",
+										"650f654222107f3eb069a3e5"
+									],
+									"query": [
+										{
+											"key": "uuid",
+											"value": "9ad294c8-945a-4bf7-852a-abe3ed478b13"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Make Payment (after approved reservation) [buyer]",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"paymentStatus\": \"completed\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/reservation/update/payment/650f654222107f3eb069a3e5?buyerUUID=a18d8672-126d-4122-94a1-2f91990838c6",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"reservation",
+										"update",
+										"payment",
+										"650f654222107f3eb069a3e5"
+									],
+									"query": [
+										{
+											"key": "buyerUUID",
+											"value": "a18d8672-126d-4122-94a1-2f91990838c6"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Buyer changes received status",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"isReceived\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/reservation/update/received/650f654222107f3eb069a3e5?buyerUUID=a18d8672-126d-4122-94a1-2f91990838c6",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"reservation",
+										"update",
+										"received",
+										"650f654222107f3eb069a3e5"
+									],
+									"query": [
+										{
+											"key": "buyerUUID",
+											"value": "a18d8672-126d-4122-94a1-2f91990838c6"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Chats",
+					"item": [
+						{
+							"name": "View all chats between user and other seller/buyers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/chats/view/all/87035946-504e-4aa7-9d5b-723905b7444d",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"chats",
+										"view",
+										"all",
+										"87035946-504e-4aa7-9d5b-723905b7444d"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find specific chat between user and another seller/buyer",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/chats/view/650ecbee2060ee1dd33957f0?uuid=87035946-504e-4aa7-9d5b-723905b7444d",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"chats",
+										"view",
+										"650ecbee2060ee1dd33957f0"
+									],
+									"query": [
+										{
+											"key": "uuid",
+											"value": "87035946-504e-4aa7-9d5b-723905b7444d"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reports",
+					"item": [
+						{
+							"name": "Get specific activity log (report)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/report/view/650f6f69b941d2c9a5510d36",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"report",
+										"view",
+										"650f6f69b941d2c9a5510d36"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a new suspicious activity log report",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"uuid\": \"87035946-504e-4aa7-9d5b-723905b7444d\",\n  \"reason\": \"Suspicious activity reason here\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/report/create/log",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"report",
+										"create",
+										"log"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get ALL activity log (report) for specific user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/report//view/all/user/87035946-504e-4aa7-9d5b-723905b7444d/",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"report",
+										"",
+										"view",
+										"all",
+										"user",
+										"87035946-504e-4aa7-9d5b-723905b7444d",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get specific activity log (report) within date range for specific user Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/report/view/range/user/87035946-504e-4aa7-9d5b-723905b7444d/?startDate=2023-01-01&endDate=2024-01-01",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"report",
+										"view",
+										"range",
+										"user",
+										"87035946-504e-4aa7-9d5b-723905b7444d",
+										""
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2023-01-01"
+										},
+										{
+											"key": "endDate",
+											"value": "2024-01-01"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete specific report log",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/report/delete/650f6f69b941d2c9a5510d36",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"report",
+										"delete",
+										"650f6f69b941d2c9a5510d36"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "Errors displayed/demo-ed here are not exhaustive."
+		}
+	]
+}
