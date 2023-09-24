@@ -12,7 +12,7 @@ const listingRoutes = require("./routes/listingRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
 const suspiciousActivityLogRoutes = require("./routes/suspiciousActivityLogRoutes");
 
-const mongoURL = process.env.DATABASE_URL;
+const mongoURL = process.env.DATABASE_URL || process.env.MONGO_URI;
 const PORT = process.env.PORT ?? 8080;
 
 mongoose.connect(mongoURL);
