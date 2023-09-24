@@ -37,3 +37,5 @@ app.use("/api/report", suspiciousActivityLogRoutes);
 app.listen(PORT, () => {
   console.log(`Server Started at ${PORT}`);
 });
+
+module.exports = app;
