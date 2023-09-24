@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "::set-output name=ci_conclusion::${{ github.event.workflow_run.conclusion }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Fail CD Workflow on CI Failure
         if: steps.ci_status.outputs.ci_conclusion != 'success'
