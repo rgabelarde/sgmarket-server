@@ -47,10 +47,9 @@ jobs:
           name: node-app
 
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'sgmarket-dev-server'
-          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_623DD736E5644A9FBB3FCEFD80BE9062 }}
-          package: .
+          package: ./dist/sgmarket-dev-server
+        
