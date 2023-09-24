@@ -62,6 +62,11 @@ class Error4xx extends Error {
         this.statusCode = 412;
         break;
 
+      case "Listing/Description suggests potentially restricted item":
+        this.name = "RestrictedItemError";
+        this.statusCode = 403;
+        break;
+
       case "sellerUUID does not match listing owner's uuid":
         this.name = "InvalidDataError";
         this.statusCode = 412;
@@ -88,6 +93,7 @@ class Error4xx extends Error {
       case "You do not have permission to make changes to the reservation's received status":
       case "Cannot change received status for a reservation that has not been approved or paid for":
       case "Listing has either not been reserved or has already been sold":
+      case "You do not have permission to make changes to this listing":
         this.name = "UnauthorizedOrRestrictedAccess";
         this.statusCode = 401;
         break;

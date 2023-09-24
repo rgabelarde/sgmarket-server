@@ -1,6 +1,10 @@
 const Listing = require("../models/Listing");
 const User = require("../models/User");
-const { NotFoundError, Error4xx } = require("../common/utils/errorValues");
+const {
+  NotFoundError,
+  Error4xx,
+  InternalServerError,
+} = require("../common/utils/errorValues");
 const { handleError } = require("../common/utils/errorHandler");
 
 // [GET] Get a listing by ID
@@ -55,6 +59,7 @@ exports.createListing = async (req, res) => {
     if (!seller) {
       throw new NotFoundError("Seller not found");
     }
+
     // Create a new listing document based on the request body
     const newListing = new Listing({
       seller: seller, // Set the seller as the entire User object
@@ -85,6 +90,10 @@ exports.updateListingById = async (req, res) => {
   });
 
   try {
+    if (!uuid) {
+      throw new Error4xx("UUID missing from query parameters");
+    }
+
     if (!listingId) {
       throw new Error4xx("listingId parameter is missing in the URL");
     }
@@ -95,7 +104,24 @@ exports.updateListingById = async (req, res) => {
       );
     }
 
-    const updatedListing = await Listing.findByIdAndUpdate(
+    // Find the seller based on the UUID
+    const seller = await User.findOne({ uuid });
+    if (!seller) {
+      throw new NotFoundError("Seller not found");
+    }
+
+    const listing = await Listing.findById(listingId).populate("seller");
+    if (!listing) {
+      throw new NotFoundError("Listing not found");
+    }
+
+    if (uuid !== listing.seller.uuid) {
+      throw new Error4xx(
+        "You do not have permission to make changes to this listing"
+      );
+    }
+
+    const updatedListing = await Listing.findByIdAndUpdateWithCheck(
       listingId,
       updatedFields,
       { new: true } // Return updated document

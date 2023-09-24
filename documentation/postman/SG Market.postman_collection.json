@@ -29,7 +29,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"test user\",\n  \"email\": \"newuser@example.com\",\n  \"biometricVerified\": true,\n  \"flags\": 0,\n  \"uuid\": \"73c4922b-bc6b-462a-a9ef-769884d963d1\"\t// get from singpass + my info verification\n}\n",
+							"raw": "{\n  \"username\": \"test123\",\n  \"email\": \"newuser@example.com\",\n  \"biometricVerified\": true,\n  \"flags\": 0,\n  \"uuid\": \"73c4922b-bc6b-462a-a9ef-769884d963d1\"\t// get from singpass + my info verification\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -115,7 +115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"listingName\": \"cup\",\n\t\"description\": \"Condition 5/10\",\n\t\"price\": 50\n}",
+							"raw": "{\n\t\"listingName\": \"test\",\n\t\"description\": \"Condition 5/10\",\n\t\"price\": 50\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -143,7 +143,76 @@
 					"response": []
 				},
 				{
-					"name": "3b. View an item/listing",
+					"name": "3b. Blocked Posting of 'restricted' listing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"listingName\": \"concert ticket\",\n\t\"description\": \"this should fail\",\n\t\"price\": 50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/listing/new?uuid=73c4922b-bc6b-462a-a9ef-769884d963d1",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"listing",
+								"new"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "73c4922b-bc6b-462a-a9ef-769884d963d1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3c. Blocked Update to 'restricted' listing",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"listingName\": \"concert\",\n\t\"description\": \"condition 10/10\",\n\t\"price\": 50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{origin}}/{{apiVersion}}/listing/update/65104490fc18fb3cf354e62e?uuid=73c4922b-bc6b-462a-a9ef-769884d963d1",
+							"host": [
+								"{{origin}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"listing",
+								"update",
+								"65104490fc18fb3cf354e62e"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "73c4922b-bc6b-462a-a9ef-769884d963d1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3d. View an item/listing",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -727,7 +796,7 @@
 			]
 		},
 		{
-			"name": "All Functions",
+			"name": "More Functions",
 			"item": [
 				{
 					"name": "Messages",
@@ -1386,6 +1455,75 @@
 										"{{apiVersion}}",
 										"listing",
 										"new"
+									],
+									"query": [
+										{
+											"key": "uuid",
+											"value": "73c4922b-bc6b-462a-a9ef-769884d963d1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post a \"restricted\" listing",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"listingName\": \"concert\",\n\t\"description\": \"this should fail\",\n\t\"price\": 50\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/listing/new?uuid=73c4922b-bc6b-462a-a9ef-769884d963d1",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"listing",
+										"new"
+									],
+									"query": [
+										{
+											"key": "uuid",
+											"value": "73c4922b-bc6b-462a-a9ef-769884d963d1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Blocked Update to 'restricted' listing (update to change content to sus item)",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"listingName\": \"concert\",\n\t\"description\": \"condition 10/10\",\n\t\"price\": 50\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{origin}}/{{apiVersion}}/listing/update/65104490fc18fb3cf354e62e?uuid=73c4922b-bc6b-462a-a9ef-769884d963d1",
+									"host": [
+										"{{origin}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"listing",
+										"update",
+										"65104490fc18fb3cf354e62e"
 									],
 									"query": [
 										{
@@ -2171,7 +2309,7 @@
 					]
 				}
 			],
-			"description": "Errors displayed/demo-ed here are not exhaustive."
+			"description": "Errors displayed/demo-ed here are not exhaustive.\n\nFunctions not exhaustive"
 		}
 	]
 }

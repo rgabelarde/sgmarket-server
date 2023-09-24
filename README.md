@@ -100,10 +100,10 @@ For a live demo of SG Market, visit [https://sgmarket-api.onrender.com/](https:/
 
 ## Documentation
 
-For more detailed documentation for the planning process, please refer to the [documentation](/documentation/NDI%20TAP%20Appln.docx).
+For more detailed documentation for the planning process, please refer to the [documentation](/documentation/NDI%20TAP%20Appln.docx). Do note that this planning document is not entirely accurate to the prototype implementation as it was a pre-implementation draft.
+
 
 The server component includes several key components:
-
 ### User Component
 As there is restricted access to NDI products for actual use, please imagine that the uuid, email should come from the singpass api along with MyInfo authorisation.
 
