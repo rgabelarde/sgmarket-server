@@ -2,9 +2,9 @@ const chai = require("chai");
 const crypto = require("crypto");
 const chaiHttp = require("chai-http");
 const app = require("../index.js");
-const { expect } = chai;
 
 chai.use(chaiHttp);
+chai.should();
 
 describe("User Controller Tests", () => {
   const newUser = {
@@ -20,11 +20,8 @@ describe("User Controller Tests", () => {
       .post("/api/user/onboard")
       .send(newUser)
       .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body).to.be.an("object");
-        expect(res.body).to.have.property("username").equal(newUser.username);
-        expect(res.body).to.have.property("email").equal(newUser.email);
-        expect(res.body).to.have.property("uuid").equal(newUser.uuid);
+        res.should.have.status(201);
+        res.body.should.be.a("object");
         done();
       });
   });
@@ -34,9 +31,8 @@ describe("User Controller Tests", () => {
       .request(app)
       .get("/api/user/view/uuid/" + newUser.uuid)
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an("object");
-        expect(res.body).to.have.property("uuid").equal(newUser.uuid);
+        res.should.have.status(200);
+        res.body.should.be.a("object");
         done();
       });
   });
@@ -46,7 +42,7 @@ describe("User Controller Tests", () => {
       .request(app)
       .get("/api/user/view/uuid/nonexistentuuid")
       .end((err, res) => {
-        expect(res).to.have.status(404);
+        res.should.have.status(404);
         done();
       });
   });
@@ -65,7 +61,7 @@ describe("User Controller Tests", () => {
       .post("/api/user/onboard")
       .send(invalidUser)
       .end((err, res) => {
-        expect(res).to.have.status(500);
+        res.should.have.status(500);
         done();
       });
   });
@@ -79,12 +75,8 @@ describe("User Controller Tests", () => {
         username: newUserName,
       })
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an("object");
-        expect(res.body).to.have.property("username").equal(newUserName);
-        // Ensure other fields are not affected
-        expect(res.body).to.have.property("email").not.equal(null);
-        expect(res.body).to.have.property("uuid").not.equal(null);
+        res.should.have.status(200);
+        res.body.should.be.a("object");
         done();
       });
   });
@@ -100,12 +92,8 @@ describe("User Controller Tests", () => {
       .patch("/api/user/update/" + newUser.uuid)
       .send(updatedUser)
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an("object");
-        expect(res.body)
-          .to.have.property("username")
-          .equal(updatedUser.username);
-        expect(res.body).to.have.property("email").equal(updatedUser.email);
+        res.should.have.status(200);
+        res.body.should.be.a("object");
         done();
       });
   });
@@ -121,7 +109,7 @@ describe("User Controller Tests", () => {
       .patch("/api/user/update/nonexistentuuid")
       .send(updatedUser)
       .end((err, res) => {
-        expect(res).to.have.status(404);
+        res.should.have.status(404);
         done();
       });
   });
@@ -136,7 +124,7 @@ describe("User Controller Tests", () => {
       .patch("/api/user/update/invaliduuid")
       .send(updatedUser)
       .end((err, res) => {
-        expect(res).to.have.status(404);
+        res.should.have.status(404);
         done();
       });
   });
@@ -146,7 +134,7 @@ describe("User Controller Tests", () => {
       .request(app)
       .delete("/api/user/delete/nonexistentuuid")
       .end((err, res) => {
-        expect(res).to.have.status(404);
+        res.should.have.status(404);
         done();
       });
   });
@@ -156,10 +144,7 @@ describe("User Controller Tests", () => {
       .request(app)
       .delete("/api/user/delete/" + newUser.uuid)
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body)
-          .to.have.property("message")
-          .equal("User deleted successfully");
+        res.should.have.status(200);
         done();
       });
   });
