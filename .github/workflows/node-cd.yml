@@ -1,0 +1,23 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: node-cd
+
+on:
+  workflow_run:
+    workflows: ["node-ci"]
+    types:
+      - completed
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v2
+        env:
+          webhook_url: ${{secrets.DEPLOY_HOOK}}
+          webhook_secret: ${{secrets.DEPLOY_HOOK}}
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
