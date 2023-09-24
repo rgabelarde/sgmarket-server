@@ -11,7 +11,7 @@ const reservationRoutes = require("./routes/reservationRoutes");
 const suspiciousActivityLogRoutes = require("./routes/suspiciousActivityLogRoutes");
 
 const mongoURL = process.env.DATABASE_URL;
-const PORT = process.env.PORT ?? 80;
+const PORT = process.env.PORT ?? 3000;
 
 mongoose.connect(mongoURL);
 const database = mongoose.connection;
