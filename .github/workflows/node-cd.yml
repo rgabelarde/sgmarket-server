@@ -8,6 +8,7 @@ on:
     workflows: ["node-ci"]
     types:
       - completed
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,9 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Check CI Workflow Status
+        id: ci_status
+        run: |
+          echo "::set-output name=ci_conclusion::${{ github.event.workflow_run.conclusion }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail CD Workflow on CI Failure
+        if: steps.ci_status.outputs.ci_conclusion != 'success'
+        run: exit 1
+
       - name: Invoke deployment hook
         uses: distributhor/workflow-webhook@v2
         env:
-          webhook_url: ${{secrets.DEPLOY_HOOK}}
-          webhook_secret: ${{secrets.DEPLOY_HOOK}}
-          DATABASE_URL: ${{secrets.DATABASE_URL}}
+          webhook_url: ${{ secrets.DEPLOY_HOOK }}
+          webhook_secret: ${{ secrets.DEPLOY_HOOK }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
