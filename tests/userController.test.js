@@ -1,4 +1,5 @@
 const chai = require("chai");
+const crypto = require("crypto");
 const chaiHttp = require("chai-http");
 const app = require("../index.js");
 const { expect } = chai;
