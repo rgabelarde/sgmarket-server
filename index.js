@@ -1,10 +1,9 @@
+require("dotenv").config();
+
 var express = require("express");
 var mongoose = require("mongoose");
 var path = require("path");
 var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-
-var configData = require("./config/connection");
 
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
@@ -13,43 +12,36 @@ const listingRoutes = require("./routes/listingRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
 const suspiciousActivityLogRoutes = require("./routes/suspiciousActivityLogRoutes");
 
-async function getApp() {
-  var connectionInfo = await configData.getConnectionInfo();
-  mongoose.connect(connectionInfo.DATABASE_URL);
+const mongoURL = process.env.DATABASE_URL;
+const PORT = process.env.PORT ?? 8080;
 
-  var app = express();
+mongoose.connect(mongoURL);
+const database = mongoose.connection;
 
-  var port = normalizePort(process.env.PORT || "8080");
-  app.set("port", port);
+database.on("error", (error) => {
+  console.log(error);
+});
 
-  app.use(logger("dev"));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
-  app.use(cookieParser());
-  app.use(express.static(path.join(__dirname, "public")));
+database.once("connected", () => {
+  console.log("Database Connected");
+});
 
-  console.log("app running on PORT: " + port);
-  app.use("/api/user", userRoutes);
-  app.use("/api/chats", chatRoutes);
-  app.use("/api/messages", messageRoutes);
-  app.use("/api/listing", listingRoutes);
-  app.use("/api/reservation", reservationRoutes);
-  app.use("/api/report", suspiciousActivityLogRoutes);
-  return app;
-}
+const app = express();
+app.use(express.json());
 
-function normalizePort(val) {
-  var port = parseInt(val, 10);
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
 
-  if (isNaN(port)) {
-    return val;
-  }
+app.use("/api/user", userRoutes);
+app.use("/api/chats", chatRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/listing", listingRoutes);
+app.use("/api/reservation", reservationRoutes);
+app.use("/api/report", suspiciousActivityLogRoutes);
 
-  if (port >= 0) {
-    return port;
-  }
+app.listen(PORT, () => {
+  console.log(`Server Started at ${PORT}`);
+});
 
-  return false;
-}
-
-module.exports = { getApp };
+module.exports = app;

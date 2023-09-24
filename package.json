@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha tests/*.js --exit",
-    "start": "nodemon ./bin/www"
+    "start": "nodemon index.js"
   },
   "author": "Rachel Gina Abelarde",
   "license": "ISC",
